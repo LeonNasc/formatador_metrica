@@ -66,12 +66,12 @@ def main():
 def print_csv(collection):
 
 	with open("result.csv", "w") as f:
-		f.write("ano/tema"+",".join(list(collection[0][2019].keys())))
+		f.write("ano/tema,"+",".join(list(collection[0][2019].keys())) + "\r\n")
 		for tema in collection:
 				for ano in filter(lambda x: str(x).isnumeric(), tema.keys()):
 					writeable = tema["tema"]+"_"+str(ano) +","
 					writeable = writeable + ",".join(map(str,tema[ano].values()))
-					f.write(writeable)
+					f.write(writeable + "\r\n")
 			
 		
 
