@@ -13,7 +13,7 @@ def load_file():
 	ipcs = set()
 	curr_year = 2019
 
-	with open("metrica.csv") as metrica:
+	with open("ipcs_industrial.csv") as metrica:
 		linhas = metrica.readlines()
 		curr_tema = linhas[0].split(",")[0]
 		for linha in range(len(linhas)):
@@ -36,7 +36,7 @@ def load_file():
 				values = linhas[linha+1].split(",")
 
 				for i in range(1,len(curr_line[1:])):
-					tema[curr_year][curr_line[i]] = values[i]	
+					tema[curr_year][curr_line[i]] = values[i] if i<len(values) else 0
 	
 				lines.append(tema)
 
@@ -65,7 +65,7 @@ def main():
 
 def print_csv(collection):
 
-	with open("result.csv", "w") as f:
+	with open("resultI.csv", "w") as f:
 		primeira_linha = dict(sorted(collection[0][2019].items()))
 		f.write("ano/tema,"+",".join(list(primeira_linha.keys())) + "\r\n")
 		for tema in collection:
