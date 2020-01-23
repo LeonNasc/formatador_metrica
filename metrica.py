@@ -1,27 +1,29 @@
 #encoding: utf-8
 
 def valid_tema(termo, curr_year):
-	return not termo.isnumeric() and "código" not in termo.lower() and "número" not in termo.lower() and curr_year == 1999 and termo != ''
+	return not termo.isnumeric() and "codigo" not in termo.lower() and "número" not in termo.lower() and curr_year == 1999 and termo != ''
 
 def valid_year(ano):
 	try:
 		return int(ano) in range(1999, 2020)
 	except:
 		return False
-def load_file(): 
+    
+def load_file(file): 
 	lines = []
 	ipcs = set()
 	curr_year = 2019
 
-	with open("ipcs_industrial.csv") as metrica:
+	with open(file) as metrica:
 		linhas = metrica.readlines()
-		curr_tema = linhas[0].split(",")[0]
+		curr_tema = linhas[0].split(";")[0]
 		for linha in range(len(linhas)):
-			curr_line = linhas[linha].split(",")
+            print("a")
+			curr_line = linhas[linha].split(";")
 			curr_tema = curr_line[0] if valid_tema(curr_line[0], curr_year) else curr_tema
 			curr_year = int(curr_line[0]) if valid_year(curr_line[0])  else curr_year
 
-			if("código" in curr_line[0].lower()):
+			if("codigo" in curr_line[0].lower()):
 				ipcs.update(map(lambda x:x.strip(),curr_line[1:])) # atualiza o conjunto dos IPCS
 
 				tema = {}
@@ -59,15 +61,19 @@ def fill_ipcs(lista, ipcs):
 
 
 def main():
-	temas = load_file()[0]
-	print_csv(temas)
+    temas1, ipcs1 = load_file("ipcs_industrial.csv")
+    temas2, ipcs2 = load_file("ipcs_academicos.csv")
+    
+    ipcs = ipcs1 | ipcs2
+    print_csv(temas2, ipcs)
+    print_csv(temas1, ipcs)
 
 
-def print_csv(collection):
+def print_csv(collection, temas):
 
-	with open("resultI.csv", "w") as f:
-		primeira_linha = dict(sorted(collection[0][2019].items()))
-		f.write("ano/tema,"+",".join(list(primeira_linha.keys())) + "\r\n")
+	with open("result_1.csv", "a") as f:
+		primeira_linha = sorted(list(temas))
+		f.write("ano/tema,"+",".join(primeira_linha) + "\r\n")
 		for tema in collection:
 				for ano in filter(lambda x: str(x).isnumeric(), tema.keys()):
 					atual = dict(sorted(tema[ano].items()))
